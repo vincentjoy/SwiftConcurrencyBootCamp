@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  SwiftConcurrencyBootCamp
-//
-//  Created by Vincent Joy on 01/12/24.
-//
-
 import SwiftUI
 
 struct ContentView: View {
