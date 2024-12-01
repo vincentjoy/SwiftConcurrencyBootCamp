@@ -7,6 +7,9 @@ class DoCatchTryThrowsBootCampViewModel {
     
     func fetchTitle() {
         do {
+            if let newTitle = try? manager.getTitleOnlyError() {
+                startingText = newTitle
+            }
             let newTitle = try manager.getTitle()
             startingText = newTitle
         } catch {
@@ -25,5 +28,9 @@ class DoCatchTryThrowsBootCampDataManager {
         } else {
             throw URLError(.badServerResponse)
         }
+    }
+    
+    func getTitleOnlyError() throws -> String {
+        throw URLError(.badServerResponse)
     }
 }
