@@ -2,19 +2,44 @@ import SwiftUI
 
 class TaskGroupBootcampDataManager {
     
-    func fetchImageswithAsyncLet() async throws -> [UIImage] {
+    func fetchImagesWithAsyncLet() async throws -> [UIImage] {
         async let fetchImage1 = fetchImage(urlString: "https://picsum.photos/200")
-        async let fetchImage2 = fetchImage(urlString: "https://picsum.photos/200")
-        async let fetchImage3 = fetchImage(urlString: "https://picsum.photos/200")
-        async let fetchImage4 = fetchImage(urlString: "https://picsum.photos/200")
-        async let fetchImage5 = fetchImage(urlString: "https://picsum.photos/200")
+        async let fetchImage2 = fetchImage(urlString: "https://picsum.photos/250")
+        async let fetchImage3 = fetchImage(urlString: "https://picsum.photos/230")
+        async let fetchImage4 = fetchImage(urlString: "https://picsum.photos/350")
+        async let fetchImage5 = fetchImage(urlString: "https://picsum.photos/400")
         
         let (image1, image2, image3, image4, image5) = await (try fetchImage1, try fetchImage2, try fetchImage3, try fetchImage4, try fetchImage5)
         
         return [image1, image2, image3, image4, image5]
     }
     
-    func fetchImage(urlString: String) async throws -> UIImage {
+    
+    func fetchImagesWithTaskGroup() async throws -> [UIImage] {
+        var urlStrings: [String] = [
+            "https://picsum.photos/200",
+            "https://picsum.photos/250",
+            "https://picsum.photos/300",
+            "https://picsum.photos/350",
+            "https://picsum.photos/400"
+        ]
+        
+        return try await withThrowingTaskGroup(of: UIImage.self) { taskGroup in
+            var images: [UIImage] = []
+            images.reserveCapacity(urlStrings.count)
+            for urlString in urlStrings {
+                taskGroup.addTask {
+                    try await self.fetchImage(urlString: urlString)
+                }
+            }
+            for try await image in taskGroup {
+                images.append(image)
+            }
+            return images
+        }
+    }
+    
+    private func fetchImage(urlString: String) async throws -> UIImage {
         guard let url = URL(string: urlString) else {
             throw URLError(.badURL)
         }
@@ -37,7 +62,7 @@ class TaskGroupBootcampViewModel: ObservableObject {
     let manager = TaskGroupBootcampDataManager()
     
     func getImages() async {
-        if let images = try? await manager.fetchImageswithAsyncLet() {
+        if let images = try? await manager.fetchImagesWithAsyncLet() {
             self.images.append(contentsOf: images)
         }
     }
