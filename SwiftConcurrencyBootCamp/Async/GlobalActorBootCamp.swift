@@ -2,6 +2,10 @@
 
 import SwiftUI
 
+@globalActor struct MyFirstGlobalActor {
+    static var shared = MyNewDataManager()
+}
+
 actor MyNewDataManager {
     func getDataFromDatabase() -> [String] {
         return ["One", "Two", "Three"]
@@ -10,11 +14,14 @@ actor MyNewDataManager {
 
 class GlobalActorBootViewModel: ObservableObject {
     @Published var dataArray: [String] = []
-    let manager = MyNewDataManager()
+    let manager = MyFirstGlobalActor.shared
     
-    func getData() async {
-        let data = await manager.getDataFromDatabase()
-        self.dataArray = data
+    @MyFirstGlobalActor
+    func getData() {
+        Task {
+            let data = await manager.getDataFromDatabase()
+            self.dataArray = data
+        }
     }
 }
 
