@@ -17,19 +17,43 @@ struct MyStruct {
     var title: String
 }
 
+class MyClass {
+    var title: String
+    
+    init(title: String) {
+        self.title = title
+    }
+}
+
 extension StructClassActorBootCamp {
     
     private func runTest() {
         print("Test Started")
-        structTest1()
+//        structTest1()
+        classTest1()
     }
     
     private func structTest1() {
         let objectA = MyStruct(title: "Starting Title")
         print("ObjectA: \(objectA.title)")
         
-        print("Pass the values of objectA to objectB")
+        print("Pass the VALUES of objectA to objectB")
         var objectB = objectA
+        print("ObjectB: \(objectB.title)")
+        
+        objectB.title = "New Title"
+        print("ObjectB title changed")
+        
+        print("ObjectA title: \(objectA.title)")
+        print("ObjectB title: \(objectB.title)")
+    }
+    
+    private func classTest1() {
+        let objectA = MyClass(title: "Starting Title")
+        print("ObjectA: \(objectA.title)")
+        
+        print("Pass the REFERENCE of objectA to objectB")
+        let objectB = objectA
         print("ObjectB: \(objectB.title)")
         
         objectB.title = "New Title"
