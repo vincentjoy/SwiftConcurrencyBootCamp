@@ -63,3 +63,34 @@ extension StructClassActorBootCamp {
         print("ObjectB title: \(objectB.title)")
     }
 }
+
+// Immutable struct
+struct CustomStruct {
+    let title: String
+    
+    func updateTitle(newTitle: String) -> CustomStruct {
+        CustomStruct(title: newTitle)
+    }
+}
+
+extension StructClassActorBootCamp {
+    
+    private func structTest2() {
+        print("structTest2")
+        
+        var struct1 = MyStruct(title: "Title 1")
+        print("Struct1: ", struct1.title)
+        struct1.title = "Title 2"
+        print("Struct1: ", struct1.title)
+        
+        var struct2 = CustomStruct(title: "Title 1")
+        print("Struct2: ", struct2.title)
+        struct2 = CustomStruct(title: "Title 2")
+        print("Struct2: ", struct2.title)
+        
+        var struct3 = CustomStruct(title: "Title 1")
+        print("Struct3: ", struct3.title)
+        struct3 = struct3.updateTitle(newTitle: "Title 2")
+        print("Struct3: ", struct3.title)
+    }
+}
