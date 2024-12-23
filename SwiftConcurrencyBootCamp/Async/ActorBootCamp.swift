@@ -22,10 +22,16 @@ actor MyActorDataManager {
     private init() {}
     var data: [String] = []
     
+    nonisolated let myRandonData: String = "New Data"
+    
     func getRandomData() -> String? {
         self.data.append(UUID().uuidString)
         print(Thread.current)
         return self.data.randomElement()
+    }
+    
+    nonisolated func getRandomDataNonIsolated() -> String {
+        return "New Data"
     }
 }
 
@@ -41,6 +47,12 @@ struct HomeView: View {
             Text(text)
                 .font(.headline)
         }
+        .onTapGesture(perform: {
+            let newString = manager.getRandomDataNonIsolated()
+            print(newString)
+            let randonString = manager.myRandonData
+            print(randonString)
+        })
         .onReceive(timer) { _ in
             Task {
                 if let data = await manager.getRandomData() {
