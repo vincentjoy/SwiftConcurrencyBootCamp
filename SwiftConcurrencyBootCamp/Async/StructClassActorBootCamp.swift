@@ -73,6 +73,15 @@ struct CustomStruct {
     }
 }
 
+// Mutable struct
+struct MutatingStruct {
+    var title: String
+    
+    mutating func updateTitle(newTitle: String) {
+        title = newTitle
+    }
+}
+
 extension StructClassActorBootCamp {
     
     private func structTest2() {
@@ -92,5 +101,11 @@ extension StructClassActorBootCamp {
         print("Struct3: ", struct3.title)
         struct3 = struct3.updateTitle(newTitle: "Title 2")
         print("Struct3: ", struct3.title)
+        
+        var struct4 = MutatingStruct(title: "Title 1")
+        print("Struct4: ", struct4.title)
+        struct4.updateTitle(newTitle: "Title 2")
+        print("Struct4: ", struct4.title)
     }
 }
+
