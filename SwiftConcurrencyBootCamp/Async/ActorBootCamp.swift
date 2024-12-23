@@ -1,14 +1,19 @@
+// From the tutorial on Actor - https://youtu.be/UUdi137FySk?si=C3Bzxe1gcnJWjeJC
+
 import SwiftUI
 
 class MyDataManager {
     static let instance = MyDataManager()
     private init() {}
     var data: [String] = []
+    private let queue = DispatchQueue(label: "com.MyApp.MyDataManager")
     
-    func getRandomData() -> String? {
-        self.data.append(UUID().uuidString)
-        print(Thread.current)
-        return data.randomElement()
+    func getRandomData(completion: @escaping ((String?) -> Void)) {
+        queue.async {
+            self.data.append(UUID().uuidString)
+            print(Thread.current)
+            completion(self.data.randomElement())
+        }
     }
 }
 
@@ -26,9 +31,11 @@ struct HomeView: View {
         }
         .onReceive(timer) { _ in
             DispatchQueue.global(qos: .background).async {
-                if let data = manager.getRandomData() {
-                    DispatchQueue.main.async {
-                        self.text = data
+                manager.getRandomData { title in
+                    if let title {
+                        DispatchQueue.main.async {
+                            self.text = title
+                        }
                     }
                 }
             }
@@ -50,9 +57,11 @@ struct BrowseView: View {
         }
         .onReceive(timer) { _ in
             DispatchQueue.global(qos: .default).async {
-                if let data = manager.getRandomData() {
-                    DispatchQueue.main.async {
-                        self.text = data
+                manager.getRandomData { title in
+                    if let title {
+                        DispatchQueue.main.async {
+                            self.text = title
+                        }
                     }
                 }
             }
