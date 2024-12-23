@@ -1,3 +1,6 @@
+// Practice codes from the lecture - https://youtu.be/-JLenSTKEcA?si=zNSw8dT43RMsSkYI
+
+
 import SwiftUI
 
 struct StructClassActorBootCamp: View {
@@ -30,7 +33,10 @@ extension StructClassActorBootCamp {
     private func runTest() {
         print("Test Started")
 //        structTest1()
-        classTest1()
+//        classTest1()
+        Task {
+            await actorTest1()
+        }
     }
     
     private func structTest1() {
@@ -61,6 +67,21 @@ extension StructClassActorBootCamp {
         
         print("ObjectA title: \(objectA.title)")
         print("ObjectB title: \(objectB.title)")
+    }
+    
+    private func actorTest1() async {
+        let objectA = MyActor(title: "Starting Title")
+        await print("ObjectA: \(objectA.title)")
+        
+        print("Pass the REFERENCE of objectA to objectB")
+        let objectB = objectA
+        await print("ObjectB: \(objectB.title)")
+        
+        await objectB.updateTitle(newTitle: "New Title")
+        print("ObjectB title changed")
+        
+        await print("ObjectA title: \(objectA.title)")
+        await print("ObjectB title: \(objectB.title)")
     }
 }
 
@@ -109,3 +130,14 @@ extension StructClassActorBootCamp {
     }
 }
 
+actor MyActor {
+    var title: String
+    
+    init(title: String) {
+        self.title = title
+    }
+    
+    func updateTitle(newTitle: String) {
+        title = newTitle
+    }
+}
