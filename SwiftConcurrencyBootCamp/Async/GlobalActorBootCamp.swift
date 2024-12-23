@@ -20,7 +20,9 @@ class GlobalActorBootViewModel: ObservableObject {
     func getData() {
         Task {
             let data = await manager.getDataFromDatabase()
-            self.dataArray = data
+            await MainActor.run {
+                self.dataArray = data
+            }
         }
     }
 }
