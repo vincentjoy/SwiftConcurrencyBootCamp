@@ -13,7 +13,7 @@ actor MyNewDataManager {
 }
 
 class GlobalActorBootViewModel: ObservableObject {
-    @Published var dataArray: [String] = []
+    @MainActor @Published var dataArray: [String] = []
     let manager = MyFirstGlobalActor.shared
     
     @MyFirstGlobalActor
