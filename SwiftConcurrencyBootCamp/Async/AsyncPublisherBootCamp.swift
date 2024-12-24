@@ -1,7 +1,7 @@
 // From the tutorial - https://youtu.be/ePPm2ftSVqw?si=xmUZgQpjBqANOqy9
 
 import SwiftUI
-import Combine
+//import Combine
 
 class AsyncPublisherDataManager {
     
@@ -21,21 +21,32 @@ class AsyncPublisherDataManager {
 
 class AsyncPublisherBootCampViewModel: ObservableObject {
     
-    @Published var dataArray: [String] = []
+    @MainActor @Published var dataArray: [String] = []
     let manager = AsyncPublisherDataManager()
-    var cancellable = Set<AnyCancellable>()
+//    var cancellable = Set<AnyCancellable>()
     
     init() {
         addSubscribers()
     }
     
     private func addSubscribers() {
+        
+        Task {
+            for await value in manager.$myData.values {
+                await MainActor.run {
+                    self.dataArray = value
+                }
+            }
+        }
+        
+        /* Combine implementation
         manager.$myData
             .receive(on: DispatchQueue.main, options: nil)
             .sink { dataArray in
                 self.dataArray = dataArray
             }
             .store(in: &cancellable)
+         */
     }
     
     func start() async {
