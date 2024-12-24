@@ -3,7 +3,7 @@
 import SwiftUI
 import Combine
 
-actor AsyncPublisherDataManager {
+class AsyncPublisherDataManager {
     
     @Published var myData: [String] = []
     
