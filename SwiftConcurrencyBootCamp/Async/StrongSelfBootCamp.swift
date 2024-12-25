@@ -13,7 +13,17 @@ class StrongSelfBootCampViewModel: ObservableObject {
     
     @Published var data: String = "Some title"
     let dataService = StrongSelfDataService()
+    
     private var someTask: Task<Void, Never>?
+    private var myTasks: [Task<Void, Never>] = []
+    
+    func cancelTask() {
+        someTask?.cancel()
+        someTask = nil
+        
+        myTasks.forEach({ $0.cancel() })
+        myTasks = []
+    }
     
     // This implies strong reference
     func updateData() {
@@ -53,9 +63,24 @@ class StrongSelfBootCampViewModel: ObservableObject {
         }
     }
     
-    func cancelTask() {
-        someTask?.cancel()
-        someTask = nil
+    // Because we can manage the Task
+    func updateData6() {
+        let task1 = Task {
+            self.data = await self.dataService.getData()
+        }
+        myTasks.append(task1)
+        
+        let task2 = Task {
+            self.data = await self.dataService.getData()
+        }
+        myTasks.append(task2)
+    }
+    
+    // Here we purposefully do not cancel tasks to keep strong references
+    func updateData7() {
+        Task.detached {
+            self.data = await self.dataService.getData()
+        }
     }
 }
 
