@@ -21,7 +21,7 @@ final class MVVMBootCampViewModel: ObservableObject {
     let managerClass = MyManagerClass()
     let managerActor = MyManagerActor()
     
-    @Published private(set) var myData: String = "Starting text"
+    @MainActor @Published private(set) var myData: String = "Click Me"
     private var tasks: [Task<Void, Never>] = []
     
     func cancelTasks() {
@@ -29,8 +29,23 @@ final class MVVMBootCampViewModel: ObservableObject {
         tasks = []
     }
     
+    // One type of usage of MainActor
+    // We need to mark it as MainActor because the myData here is marked as so, becasue it is useed in the UI
+    @MainActor
     func onCallToActionButtonTapped() {
         let task = Task {
+            do {
+                myData = try await managerClass.getData()
+                // myData = try await managerActor.getData() - Here instead if we use the MyManagerActor.getData() method, when it is called, it will go to the MyManagerActor and once it is completed, it will return to the MainActor
+            } catch {
+                print(error)
+            }
+        }
+        tasks.append(task)
+    }
+    
+    func onCallToActionButtonTapped2() {
+        let task = Task { @MainActor in // Another way of usage of MainActor, that is inside the Task which uses the myData
             do {
                 myData = try await managerClass.getData()
             } catch {
@@ -46,8 +61,10 @@ struct MVVMBootCamp: View {
     @StateObject var viewModel = MVVMBootCampViewModel()
     
     var body: some View {
-        Button("Click Me") {
-            viewModel.onCallToActionButtonTapped()
+        VStack {
+            Button(viewModel.myData) { // Since the myData here is coupled with the UI, it should be marked as the MainActor
+                viewModel.onCallToActionButtonTapped()
+            }
         }
         .onDisappear {
             viewModel.cancelTasks()
