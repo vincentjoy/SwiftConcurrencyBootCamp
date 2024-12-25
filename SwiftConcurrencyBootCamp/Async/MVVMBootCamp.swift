@@ -4,16 +4,41 @@ import SwiftUI
 
 final class MyManagerClass {
     
+    func getData() async throws -> String {
+        "Some data"
+    }
 }
 
 actor MyManagerActor {
     
+    func getData() async throws -> String {
+        "Some data"
+    }
 }
 
 final class MVVMBootCampViewModel: ObservableObject {
     
     let managerClass = MyManagerClass()
     let managerActor = MyManagerActor()
+    
+    @Published private(set) var myData: String = "Starting text"
+    private var tasks: [Task<Void, Never>] = []
+    
+    func cancelTasks() {
+        tasks.forEach({ $0.cancel() })
+        tasks = []
+    }
+    
+    func onCallToActionButtonTapped() {
+        let task = Task {
+            do {
+                myData = try await managerClass.getData()
+            } catch {
+                print(error)
+            }
+        }
+        tasks.append(task)
+    }
 }
 
 struct MVVMBootCamp: View {
@@ -21,7 +46,12 @@ struct MVVMBootCamp: View {
     @StateObject var viewModel = MVVMBootCampViewModel()
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Button("Click Me") {
+            viewModel.onCallToActionButtonTapped()
+        }
+        .onDisappear {
+            viewModel.cancelTasks()
+        }
     }
 }
 
