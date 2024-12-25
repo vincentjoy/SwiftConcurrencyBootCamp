@@ -82,6 +82,10 @@ class StrongSelfBootCampViewModel: ObservableObject {
             self.data = await self.dataService.getData()
         }
     }
+    
+    func updateData8() async {
+        data = await dataService.getData()
+    }
 }
 
 struct StrongSelfBootCamp: View {
@@ -95,6 +99,9 @@ struct StrongSelfBootCamp: View {
             }
             .onDisappear {
                 viewModel.cancelTask()
+            }
+            .task { // This task is managed by SwiftUI view. So this will be automatically cancelled
+                await viewModel.updateData8()
             }
     }
 }
