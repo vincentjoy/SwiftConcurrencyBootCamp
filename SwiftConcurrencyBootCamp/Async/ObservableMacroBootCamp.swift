@@ -9,20 +9,34 @@ actor TitleDataBase {
     }
 }
 
-@MainActor
-class ObservableMacroViewModel: ObservableObject {
+@Observable class ObservableMacroViewModel: ObservableObject {
     
-    let dataBase = TitleDataBase()
-    @Published var title: String = "Starting Title"
+    @ObservationIgnored let dataBase = TitleDataBase()
+    @MainActor var title: String = "Starting Title"
     
     func updateTitle() async {
+        let title = await dataBase.getNewTitle()
+        
+        await MainActor.run {
+            self.title = title
+        }
+    }
+    
+    func updateTitle2() {
+        Task { @MainActor in
+            title = await dataBase.getNewTitle()
+        }
+    }
+    
+    @MainActor
+    func updateTitle3() async {
         title = await dataBase.getNewTitle()
     }
 }
 
 struct ObservableMacroBootCamp: View {
     
-    @StateObject private var viewModel = ObservableMacroViewModel()
+    @State private var viewModel = ObservableMacroViewModel()
     
     var body: some View {
         Text(viewModel.title)
