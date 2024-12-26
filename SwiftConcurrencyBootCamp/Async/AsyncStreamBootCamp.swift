@@ -4,8 +4,14 @@ import SwiftUI
 
 class AsyncStreamDataMananger {
     
-    func getFakeData() -> Int {
-        1234
+    func getFakeData(completion: @escaping (Int) -> Void) {
+        let items: [Int] = [1,2,3,4,5,6,7,8,9]
+        
+        for item in items {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(item), execute: {
+                completion(item)
+            })
+        }
     }
 }
 
@@ -16,7 +22,9 @@ final class AsyncStreamBootCampViewModel: ObservableObject {
     @Published private(set) var currentNumber: Int = 0
     
     func onViewAppear() {
-        currentNumber = manager.getFakeData()
+        manager.getFakeData { [weak self] item in
+            self?.currentNumber = item
+        }
     }
 }
 
