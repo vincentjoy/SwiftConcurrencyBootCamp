@@ -4,6 +4,14 @@ import SwiftUI
 
 class AsyncStreamDataMananger {
     
+    func getAsyncStream() -> AsyncStream<Int> {
+        AsyncStream(Int.self) { continuation in
+            self.getFakeData { value in
+                continuation.yield(value)
+            }
+        }
+    }
+    
     func getFakeData(completion: @escaping (Int) -> Void) {
         let items: [Int] = [1,2,3,4,5,6,7,8,9]
         
@@ -22,8 +30,13 @@ final class AsyncStreamBootCampViewModel: ObservableObject {
     @Published private(set) var currentNumber: Int = 0
     
     func onViewAppear() {
-        manager.getFakeData { [weak self] item in
-            self?.currentNumber = item
+//        manager.getFakeData { [weak self] item in
+//            self?.currentNumber = item
+//        }
+        Task {
+            for await value in manager.getAsyncStream() {
+                currentNumber = value
+            }
         }
     }
 }
