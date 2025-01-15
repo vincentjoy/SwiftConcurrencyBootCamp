@@ -7,14 +7,14 @@ class AdvancedCombineDataService {
     
 //    @Published var basicPublisher: String = "First Publisher"
 //    let currentValuePublisher = CurrentValueSubject<String, Error>("First Publisher")
-    let passthroughPublisher = PassthroughSubject<String, Error>()
+    let passthroughPublisher = PassthroughSubject<Int, Error>()
     
     init() {
         publishFakeData()
     }
     
     private func publishFakeData() {
-        let items = ["one", "two", "three"]
+        let items = Array(0..<11)
         for x in items.indices {
             let sec = Double(x)
             DispatchQueue.main.asyncAfter(deadline: .now() + sec) {
@@ -38,6 +38,7 @@ class AdvancedCombineBootCampViewModel: ObservableObject {
     
     private func addSubscribers() {
         dataService.passthroughPublisher
+            .map({ String($0) })
             .sink { completion in
                 switch completion {
                 case .finished:
