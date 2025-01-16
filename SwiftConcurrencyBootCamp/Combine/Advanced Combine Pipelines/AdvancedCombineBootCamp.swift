@@ -90,6 +90,48 @@ class AdvancedCombineBootCampViewModel: ObservableObject {
             // .tryMin(by:)
          */
         
+        // Filter / Reducing Operations
+        /*
+            // .map({ String($0) })
+            // .tryMap({ value in
+            //     if value == 5 {
+            //         throw URLError(.badURL)
+            //     }
+            //     return String(value)
+            // })
+            // .compactMap({ value in
+            //     if value == 5 {
+            //         return nil
+            //     }
+            //     return "\(value)"
+            // })
+            // .tryCompactMap()
+            // .filter({ ($0 > 3) && ($0 < 9) })
+            // .tryFilter()
+            // .removeDuplicates()
+            // .removeDuplicates(by: { int1, int2 in
+            //     return int1 == int2
+            // })
+            // .tryRemoveDuplicates(by: )
+            // .replaceNil(with: 5) // works if the stream is of optional type
+            // .replaceEmpty(with: []) // Works if the response is a collection of arrays
+            // .replaceError(with: "Better description of error")
+            // .scan(0, { existingValue, newValue in
+            //     return existingValue + newValue
+            // })
+            // .scan(0, { $0 + $1 })
+            // .scan(0, +)
+            // .tryScan(, )
+            // .reduce(0, { existingValue, newValue in
+            //     return existingValue + newValue
+            // })
+            // .reduce(0, +)
+            // .collect() // wait and collect the entire stream, then publish finally. So receiveValue here will be sending a colection rather than individual element (so append method wont work)
+            // .collect(3) // same as above, but defining the size of the collection
+            // .allSatisfy({ $0/3 == 1 }) // returns the stream only if all the streams satisfy this condition
+            // .tryAllSatisfy()
+         */
+        
             .map({ String($0) })
             .sink { completion in
                 switch completion {
