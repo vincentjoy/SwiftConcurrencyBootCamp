@@ -8,6 +8,8 @@ class AdvancedCombineDataService {
 //    @Published var basicPublisher: String = "First Publisher"
 //    let currentValuePublisher = CurrentValueSubject<String, Error>("First Publisher")
     let passthroughPublisher = PassthroughSubject<Int, Error>()
+//    let boolPublisher = PassthroughSubject<Bool, Error>()
+//    let intPublisher = PassthroughSubject<Int, Error>()
     
     init() {
         publishFakeData()
@@ -21,6 +23,13 @@ class AdvancedCombineDataService {
 //                self.basicPublisher = items[x]
 //                self.currentValuePublisher.send(items[x])
                 self.passthroughPublisher.send(items[x])
+                
+//                if x > 4 && x < 8 {
+//                    self.boolPublisher.send(true)
+//                    self.intPublisher.send(999)
+//                } else {
+//                    self.boolPublisher.send(false)
+//                }
                 
                 if x == items.indices.last {
                     self.passthroughPublisher.send(completion: .finished)
@@ -144,6 +153,39 @@ class AdvancedCombineBootCampViewModel: ObservableObject {
             // .retry(3) // We can retry the publishing n number of times. For example, retyr the download 3 times if it fails
             // .timeout(120, scheduler: DispatchQueue.main) // timeout the publishing if the delay between each publishing is more than 2 minutes
          */
+        
+        // Multiple Publishers / Subscribers
+        /*
+            // .combineLatest(dataService.boolPublisher, dataService.intPublisher)
+            // .compactMap({ (int, bool) in
+            //     if bool {
+            //         return String(int)
+            //     }
+            //     return nil
+            // })
+            // .removeDuplicates()
+            // .compactMap({ (int1, bool, int2) in
+            //     if bool {
+            //         return String(int1)
+            //     }
+            //     return "n/a"
+            // })
+            // .merge(with: dataService.intPublisher)
+            // .zip(dataService.boolPublisher, dataService.intPublisher)
+            // .map({ tuple in
+            //     return String(tuple.0) + tuple.1.description + String(tuple.2)
+            // })
+            //.tryMap({ int in
+            //    if int == 5 {
+            //        throw URLError(.badServerResponse)
+            //    }
+            //    return int
+            //})
+            //.catch({ error in // This operator allows - if any error is captured from any publisher, then it will let us publish from another publisher
+            //    return self.dataService.intPublisher
+            //})
+        */
+        
         
             .map({ String($0) })
             .sink { completion in
