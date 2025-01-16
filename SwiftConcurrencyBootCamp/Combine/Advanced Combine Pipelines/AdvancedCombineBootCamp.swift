@@ -132,6 +132,19 @@ class AdvancedCombineBootCampViewModel: ObservableObject {
             // .tryAllSatisfy()
          */
         
+        // Timing operations
+        /*
+            // .debounce(for: 0.75, scheduler: DispatchQueue.main) // useful in text fields, where user types to search, we can add a debounce of 0.75 seconds before executing the search
+            // .delay(for: 2, scheduler: DispatchQueue.main) // Useful in adding some loading indicator when results are loading or before published
+            // .measureInterval(using: DispatchQueue.main) // measures the time interval, with a combination of map stride below, to nano second precision
+            // .map({ stride in
+            //     return "\(stride.timeInterval)"
+            // })
+            // .throttle(for: 5, scheduler: DispatchQueue.main, latest: true) // Throttle the publishing for 5 seconds and then pubish the latest value. Handy for scenarios where we need to delay the refresh
+            // .retry(3) // We can retry the publishing n number of times. For example, retyr the download 3 times if it fails
+            // .timeout(120, scheduler: DispatchQueue.main) // timeout the publishing if the delay between each publishing is more than 2 minutes
+         */
+        
             .map({ String($0) })
             .sink { completion in
                 switch completion {
