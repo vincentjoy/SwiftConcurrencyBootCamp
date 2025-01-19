@@ -11,9 +11,17 @@ extension FileManager {
     }
 }
 
+@propertyWrapper
 struct FileManagerProperty: DynamicProperty {
     
-    @State var title: String
+    @State private var title: String
+    var wrappedValue: String {
+        get {
+            title
+        } nonmutating set {
+            saveTitle(newValue)
+        }
+    }
     
     init() {
         do {
@@ -36,16 +44,16 @@ struct FileManagerProperty: DynamicProperty {
 
 struct PropertyWrapperBootCamp: View {
     
-    var fileManagerProperty = FileManagerProperty()
+    @FileManagerProperty private var title: String
     
     var body: some View {
         VStack(spacing: 24) {
-            Text(fileManagerProperty.title).font(.largeTitle)
+            Text(title).font(.largeTitle)
             Button("Click me 1") {
-                fileManagerProperty.saveTitle("title 1")
+                title = "title 1"
             }
             Button("Click me 2") {
-                fileManagerProperty.saveTitle("title 2")
+                title = "title 2"
             }
         }
     }
