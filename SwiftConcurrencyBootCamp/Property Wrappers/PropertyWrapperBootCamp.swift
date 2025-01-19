@@ -2,35 +2,9 @@
 
 import SwiftUI
 
-struct PropertyWrapperBootCamp: View {
+struct FileManagerProperty {
     
-    @State private var title: String = "Starting Title"
-    
-    var body: some View {
-        VStack(spacing: 24) {
-            Text(title).font(.largeTitle)
-            Button("Click me 1") {
-                setTitleAsUpperCased("title 1")
-            }
-            Button("Click me 2") {
-                setTitleAsUpperCased("title 2")
-            }
-        }
-        .onAppear {
-            do {
-                let savedTitle = try String(contentsOf: path, encoding: .utf8)
-                title = savedTitle
-            } catch {
-                print("Error getting the title")
-            }
-        }
-    }
-    
-    private func setTitleAsUpperCased(_ title: String) {
-        let newTitle = title.uppercased()
-        self.title = newTitle
-        saveTitle(newTitle)
-    }
+    var title: String = "Starting Title"
     
     private var path: URL {
         FileManager.default
@@ -39,11 +13,40 @@ struct PropertyWrapperBootCamp: View {
             .appending(path: "custom_file.txt")
     }
     
-    private func saveTitle(_ newTitle: String) {
+    mutating func load() {
+        do {
+            title = try String(contentsOf: path, encoding: .utf8)
+        } catch {
+            print("Error getting the title")
+        }
+    }
+    
+    mutating func saveTitle(_ newTitle: String) {
         do {
             try newTitle.write(to: path, atomically: false, encoding: .utf8)
+            title = newTitle
         } catch {
             print("Error saving the file: \(error.localizedDescription)")
+        }
+    }
+}
+
+struct PropertyWrapperBootCamp: View {
+    
+    @State var fileManagerProperty = FileManagerProperty()
+    
+    var body: some View {
+        VStack(spacing: 24) {
+            Text(fileManagerProperty.title).font(.largeTitle)
+            Button("Click me 1") {
+                fileManagerProperty.saveTitle("title 1")
+            }
+            Button("Click me 2") {
+                fileManagerProperty.saveTitle("title 2")
+            }
+        }
+        .onAppear {
+            fileManagerProperty.load()
         }
     }
 }
