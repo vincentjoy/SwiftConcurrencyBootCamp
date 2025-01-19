@@ -25,12 +25,21 @@ struct FileManagerProperty: DynamicProperty {
         }
     }
     
-    init(key: String) {
+    var projectedValue: Binding<String> {
+        Binding {
+            wrappedValue
+        } set: { newValue in
+            wrappedValue = newValue
+        }
+
+    }
+    
+    init(wrappedValue: String, _ key: String) {
         self.key = key
         do {
             title = try String(contentsOf: FileManager.documensPath(key: key), encoding: .utf8)
         } catch {
-            title = "Starting Title"
+            title = wrappedValue
             print("Error getting the title")
         }
     }
@@ -47,21 +56,33 @@ struct FileManagerProperty: DynamicProperty {
 
 struct PropertyWrapperBootCamp: View {
     
-    @FileManagerProperty(key: "custom_title_1") private var title1: String
-    @FileManagerProperty(key: "custom_title_2") private var title2: String
+    @FileManagerProperty("custom_title_1") private var title1: String = "Starting Value 1"
+    @FileManagerProperty("custom_title_2") private var title2: String = "Starting Value 2"
     
     var body: some View {
         VStack(spacing: 24) {
             Text(title1).font(.largeTitle)
             Text(title2).font(.largeTitle)
+            PropertyWrapperChildView(subtitle: $title1)
+            
             Button("Click me 1") {
                 title1 = "title 1"
-                title2 = "title 2"
             }
             Button("Click me 2") {
-                title1 = "custom title 1"
-                title2 = "custom title 2"
+                title1 = "title 2"
+                title2 = "Some random title"
             }
+        }
+    }
+}
+
+struct PropertyWrapperChildView: View {
+    @Binding var subtitle: String
+    var body: some View {
+        Button {
+            subtitle = "Another Title"
+        } label: {
+            Text(subtitle).font(.largeTitle)
         }
     }
 }
