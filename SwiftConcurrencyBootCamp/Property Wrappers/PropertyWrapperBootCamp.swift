@@ -2,28 +2,31 @@
 
 import SwiftUI
 
-struct FileManagerProperty {
-    
-    var title: String = "Starting Title"
-    
-    private var path: URL {
+extension FileManager {
+    static func documensPath() -> URL {
         FileManager.default
             .urls(for: .documentDirectory, in: .userDomainMask)
             .first!
             .appending(path: "custom_file.txt")
     }
+}
+
+struct FileManagerProperty: DynamicProperty {
     
-    mutating func load() {
+    @State var title: String
+    
+    init() {
         do {
-            title = try String(contentsOf: path, encoding: .utf8)
+            title = try String(contentsOf: FileManager.documensPath(), encoding: .utf8)
         } catch {
+            title = "Starting Title"
             print("Error getting the title")
         }
     }
     
-    mutating func saveTitle(_ newTitle: String) {
+    func saveTitle(_ newTitle: String) {
         do {
-            try newTitle.write(to: path, atomically: false, encoding: .utf8)
+            try newTitle.write(to: FileManager.documensPath(), atomically: false, encoding: .utf8)
             title = newTitle
         } catch {
             print("Error saving the file: \(error.localizedDescription)")
@@ -33,7 +36,7 @@ struct FileManagerProperty {
 
 struct PropertyWrapperBootCamp: View {
     
-    @State var fileManagerProperty = FileManagerProperty()
+    var fileManagerProperty = FileManagerProperty()
     
     var body: some View {
         VStack(spacing: 24) {
@@ -44,9 +47,6 @@ struct PropertyWrapperBootCamp: View {
             Button("Click me 2") {
                 fileManagerProperty.saveTitle("title 2")
             }
-        }
-        .onAppear {
-            fileManagerProperty.load()
         }
     }
 }
