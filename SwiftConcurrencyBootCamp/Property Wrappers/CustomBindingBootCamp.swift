@@ -2,6 +2,20 @@
 
 import SwiftUI
 
+extension Binding where Value == Bool {
+    
+    init<T>(value: Binding<T?>) {
+        self.init {
+            value.wrappedValue != nil
+        } set: { newValue in
+            if !newValue {
+                value.wrappedValue = nil
+            }
+        }
+
+    }
+}
+
 struct CustomBindingBootCamp: View {
     
     @State var title: String = "Start"
@@ -30,15 +44,22 @@ struct CustomBindingBootCamp: View {
 //                showError.toggle()
             }
         }
-        .alert(errorTitle ?? "nA", isPresented: Binding(get: {
-            (errorTitle != nil)
-        }, set: { newValue in
-            if !newValue {
-                errorTitle = nil
+        .alert(errorTitle ?? "NA", isPresented: Binding(value: $errorTitle)) {
+            Button("Ok") {
+                
             }
-        })) {
-            
         }
+//        .alert(errorTitle ?? "nA", isPresented: Binding(get: {
+//            (errorTitle != nil)
+//        }, set: { newValue in
+//            if !newValue {
+//                errorTitle = nil
+//            }
+//        })) {
+//            Button("Ok") {
+//
+//            }
+//        }
 //        .alert(errorTitle ?? "NA", isPresented: $showError) {
 //            Button("Ok") {
 //                
