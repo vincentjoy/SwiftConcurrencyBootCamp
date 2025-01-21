@@ -25,7 +25,7 @@ struct FileManagerProperty: DynamicProperty {
         }
     }
     
-    var projectedValue: Binding<String> {
+    var projectedValue: Binding<String> { // Projected value is optional, only if this property is passed around as a binding property
         Binding {
             wrappedValue
         } set: { newValue in
