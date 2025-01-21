@@ -56,14 +56,11 @@ struct FileManagerCodableProperty<T:Codable>: DynamicProperty {
         }
     }
     
-//    var projectedValue: Binding<T?> { // Projected value is optional, only if this property is passed around as a binding property
-//        Binding {
-//            wrappedValue
-//        } set: { newValue in
-//            wrappedValue = newValue
-//        }
-//
-//    }
+    var projectedValue: Binding<T?> { // Need to add this property only if this is passed around as a binding property
+        Binding(
+            get: { wrappedValue },
+            set: { wrappedValue = $0 })
+    }
     
     init(_ key: String) {
         self.key = key
@@ -99,9 +96,18 @@ struct PropertyWrapper2BootCamp: View {
             Button(title) {
                 title = "new title"
             }
-            Button(userProfile?.name ?? "NA") {
-                userProfile = User(name: "VJ", age: 75, isPremium: true)
-            }
+            SomeBindingView(userProfile: $userProfile)
+        }
+    }
+}
+
+struct SomeBindingView: View {
+    
+    @Binding var userProfile: User?
+    
+    var body: some View {
+        Button(userProfile?.name ?? "NA") {
+            userProfile = User(name: "VJ", age: 75, isPremium: true)
         }
     }
 }
