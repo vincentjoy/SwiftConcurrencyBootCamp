@@ -42,10 +42,15 @@ struct User: Codable {
     let isPremium: Bool
 }
 
+struct FileManagerKeyPath<T:Codable> {
+    let key: String
+    let type: T.Type
+}
+
 struct FileManagerValues {
     static let shared = FileManagerValues()
     private init() {}
-    let userProfile = "user_profile"
+    let userProfile = FileManagerKeyPath(key: "user_profile", type: User.self)
 }
 
 @propertyWrapper
@@ -81,8 +86,8 @@ struct FileManagerCodableProperty<T:Codable>: DynamicProperty {
         }
     }
     
-    init(_ key: KeyPath<FileManagerValues, String>) {
-        let keyPath = FileManagerValues.shared[keyPath: key]
+    init(_ key: KeyPath<FileManagerValues, FileManagerKeyPath<T>>) {
+        let keyPath = FileManagerValues.shared[keyPath: key].key
         self.key = keyPath
         do {
             let url = FileManager.documensPath(key: keyPath)
@@ -110,7 +115,8 @@ struct PropertyWrapper2BootCamp: View {
     
     @Capitalized private var title: String = "Hello, World!"
 //    @FileManagerCodableProperty("user_profile") private var userProfile: User?
-    @FileManagerCodableProperty(\.userProfile) private var userProfile: User?
+//    @FileManagerCodableProperty(\.userProfile) private var userProfile: User?
+    @FileManagerCodableProperty(\.userProfile) private var userProfile
 
     
     var body: some View {
