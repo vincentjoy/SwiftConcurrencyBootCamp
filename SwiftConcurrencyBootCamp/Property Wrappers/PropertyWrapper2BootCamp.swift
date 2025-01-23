@@ -42,6 +42,12 @@ struct User: Codable {
     let isPremium: Bool
 }
 
+struct FileManagerValues {
+    static let shared = FileManagerValues()
+    private init() {}
+    let userProfile = "user_profile"
+}
+
 @propertyWrapper
 struct FileManagerCodableProperty<T:Codable>: DynamicProperty {
     
@@ -75,6 +81,20 @@ struct FileManagerCodableProperty<T:Codable>: DynamicProperty {
         }
     }
     
+    init(_ key: KeyPath<FileManagerValues, String>) {
+        let keyPath = FileManagerValues.shared[keyPath: key]
+        self.key = keyPath
+        do {
+            let url = FileManager.documensPath(key: keyPath)
+            let data = try Data(contentsOf: url)
+            let object = try JSONDecoder().decode(T.self, from: data)
+            _value = State(wrappedValue: object)
+        } catch {
+            _value = State(wrappedValue: nil)
+            print("Error getting the title")
+        }
+    }
+    
     func saveValue(_ newValue: T?) {
         do {
             let data = try JSONEncoder().encode(newValue!)
@@ -89,7 +109,9 @@ struct FileManagerCodableProperty<T:Codable>: DynamicProperty {
 struct PropertyWrapper2BootCamp: View {
     
     @Capitalized private var title: String = "Hello, World!"
-    @FileManagerCodableProperty("user_profile") private var userProfile: User?
+//    @FileManagerCodableProperty("user_profile") private var userProfile: User?
+    @FileManagerCodableProperty(\.userProfile) private var userProfile: User?
+
     
     var body: some View {
         VStack(spacing: 40) {
