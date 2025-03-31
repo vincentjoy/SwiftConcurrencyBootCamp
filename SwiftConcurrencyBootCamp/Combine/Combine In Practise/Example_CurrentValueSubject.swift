@@ -42,7 +42,9 @@ struct Example_CurrentValueSubject: View {
             .foregroundColor(.white)
             .cornerRadius(8)
             
-            NavigationLink("Go to Second View", destination: SecondView())
+            // NavigationLink("Go to Second View", destination: SecondView()).padding()
+            
+            NavigationLink("Go to Second View", destination: SecondViewWithViewModel())
                 .padding()
         }
     }
@@ -82,4 +84,38 @@ struct SecondView: View {
 
 #Preview {
     Example_CurrentValueSubject()
+}
+
+// Alternative approach using a view model
+class MessageViewModel: ObservableObject {
+    @Published var message: String = "No message yet"
+    private var cancellables = Set<AnyCancellable>()
+    
+    init() {
+        // Subscribe to the button tap publisher
+        ButtonTapPublisher.shared.buttonTapped
+            .sink { [weak self] newMessage in
+                self?.message = newMessage
+            }
+            .store(in: &cancellables)
+    }
+}
+
+// Alternative second view using a view model
+struct SecondViewWithViewModel: View {
+    @StateObject private var viewModel = MessageViewModel()
+    
+    var body: some View {
+        VStack {
+            Text("Second View")
+                .font(.title)
+                .padding()
+            
+            Text("Received: \(viewModel.message)")
+                .padding()
+                .background(Color.gray.opacity(0.2))
+                .cornerRadius(8)
+        }
+        .padding()
+    }
 }
